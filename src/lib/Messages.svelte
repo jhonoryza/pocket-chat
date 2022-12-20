@@ -13,6 +13,7 @@
       expand: 'user',
     });
     messages = resultList.items;
+    console.log(messages)
 
     // Subscribe to realtime messages
     unsubscribe = await pb

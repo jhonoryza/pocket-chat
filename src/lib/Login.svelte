@@ -3,6 +3,7 @@
 
   let username: string;
   let password: string;
+  let errMessage: string;
 
   async function login() {
     await pb.collection('users').authWithPassword(username, password);
@@ -19,7 +20,14 @@
       const createdUser = await pb.collection('users').create(data);
       await login();
     } catch (err) {
-      console.error(err)
+      console.error(err.data)
+      errMessage = err.data.message
+      if (errMessage != '' || errMessage != undefined) {
+        let errUser = err.data.data.username?.message ?? ''
+        let errPass = err.data.data.password?.message ?? ''
+        errMessage = errUser == '' ? errMessage : errMessage + ' Username ' + errUser
+        errMessage = errPass == '' ? errMessage : errMessage + ' Password ' + errPass
+      }
     }
   }
 
@@ -36,6 +44,9 @@
   </p>
 {:else}
   <form on:submit|preventDefault>
+    {#if errMessage}
+      <p style="color: lightcoral">{errMessage}</p>
+    {/if}
     <input
       placeholder="Username"
       type="text"
